@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gadget Galaxy | Modern Tech Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .product-slider {
+            perspective: 1000px;
+        }
+        
+        .slide {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            opacity: 0;
+            z-index: 1;
+            
+        }
+        
+        .slide.active {
+            opacity: 1;
+            z-index: 2;
+            transform: scale(1);
+            filter: brightness(1);
+        }
+        
+        .slide.next, .slide.prev {
+            transform: scale(1.1);
+            filter: brightness(1);
+        
+        }
+        
+        .cart-item {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .nav-item::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #3b82f6;
+            transition: width 0.3s;
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        .login-form {
+            animation: slideDown 0.5s ease forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <a href="https://www.linkedin.com/in/krishnnarayan-kumar-ab7b87302/" class="text-white text-xl font-bold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                        </svg>
+                        Gadget Galaxy
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-white hover:text-indigo-200 nav-item">Home</a>
+                    <a href="#products" class="text-white hover:text-indigo-200 nav-item">Products</a>
+                    <a href="#features" class="text-white hover:text-indigo-200 nav-item">Features</a>
+                    <a href="#about" class="text-white hover:text-indigo-200 nav-item">About</a>
+                </div>
+                <div class="flex items-center">
+                    <button id="loginBtn" class="text-white hover:text-indigo-200 mr-4">Login</button>
+                    <button id="cartBtn" class="relative text-white hover:text-indigo-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-blue-900 to-purple-900 text-white py-20 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 top-1/4 left-1/4 mix-blend-overlay"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full transform translate-x-1/2 translate-y-1/2 w-72 h-72 bottom-1/4 right-1/4 mix-blend-overlay"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Next-Gen Tech at Your Fingertips</h1>
+                <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Discover cutting-edge gadgets with fast shipping and expert support.</p>
+                <a href="#products" class="inline-block bg-white text-indigo-600 font-semibold px-6 py-3 rounded-lg hover:bg-indigo-100 transition duration-300 shadow-lg transform hover:-translate-y-1">
+                    Shop Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Slider -->
+    <section id="features" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Featured Products</h2>
+            <div class="product-slider relative h-96 mb-12">
+                <div class="slide active absolute inset-0 flex items-center justify-centertransition-all duration-1000 ease-in-out">
+                    <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden md:max-w-2xl">
+                        <div class="md:flex">
+                            <div class="md:flex-shrink-0">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3a869b30-1e95-4e6f-a6bd-cffaa288b5df.png" alt="Latest smartphone with edge-to-edge AMOLED display and quad camera setup" class="h-full w-full object-cover md:w-48">
+                            </div>
+                            <div class="p-8">
+                                <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Smartphone</div>
+                                <a href="#" class="block mt-1 text-lg leading-tight font-medium text-black hover:underline">Quantum X Pro</a>
+                                <p class="mt-2 text-gray-600">Experience the future with our flagship smartphone featuring an AI-powered camera system and 144Hz refresh rate display.</p>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <span class="text-2xl font-bold text-gray-900">$899</span>
+                                    <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-1.5 px-3 text-sm rounded transition duration-300 transform hover:scale-110">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide next absolute inset-0 flex items-center justify-center transition-all duration-1000 ease-in-out">
+                    <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden md:max-w-2xl">
+                        <div class="md:flex">
+                            <div class="md:flex-shrink-0">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bb1f4c35-e532-4aed-b276-233844a231e1.png" alt="Modern wireless headphones with noise cancellation and sleek metallic finish" class="h-full w-full object-cover md:w-48">
+                            </div>
+                            <div class="p-8">
+                                <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Headphones</div>
+                                <a href="#" class="block mt-1 text-lg leading-tight font-medium text-black hover:underline">Nebula Sound Elite</a>
+                                <p class="mt-2 text-gray-600">Premium wireless headphones with active noise cancellation and 40mm graphene drivers for studio-quality sound.</p>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <span class="text-2xl font-bold text-gray-900">$349</span>
+                                    <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-1.5 px-3 text-sm rounded transition duration-300 transform hover:scale-110">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide prev absolute inset-0 flex items-center justify-center transition-all duration-1000 ease-in-out">
+                    <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden md:max-w-2xl">
+                        <div class="md:flex">
+                            <div class="md:flex-shrink-0">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/09eb4a64-74ef-4f99-96fb-e1983484572a.png" alt="Sleek smartwatch with health monitoring features and customizable watch faces" class="h-full w-full object-cover md:w-48">
+                            </div>
+                            <div class="p-8">
+                                <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Smartwatch</div>
+                                <a href="#" class="block mt-1 text-lg leading-tight font-medium text-black hover:underline">Chronos V2</a>
+                                <p class="mt-2 text-gray-600">The ultimate smartwatch with ECG, blood oxygen monitoring, and 14-day battery life in a sleek titanium case.</p>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <span class="text-2xl font-bold text-gray-900">$279</span>
+                                    <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-1.5 px-3 text-sm rounded transition duration-300 transform hover:scale-110">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center space-x-4">
+                <button id="prevSlide" class="p-2 rounded-full bg-indigo-500 text-white hover:bg-indigo-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button id="nextSlide" class="p-2 rounded-full bg-indigo-500 text-white hover:bg-indigo-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Product 1 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/da0294ec-2c2a-4b7f-8ecb-b1a31cbfa1ee.png" alt="AeroBook Pro - Ultra-thin laptop with vibrant OLED display" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">New</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">AeroBook Pro</h3>
+                        <p class="text-gray-700 mb-2">14" Ultra-thin laptop with OLED display</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$1,299</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="1" data-name="AeroBook Pro" data-price="1299">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7e63a49e-eeee-44fe-97c8-e716b8fceca2.png" alt="Professional DSLR camera with multiple lenses and accessories" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">Sale</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">PhotoMaster 500D</h3>
+                        <p class="text-gray-700 mb-2">24.2MP DSLR Camera with 18-55mm Lens</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$699 <span class="text-sm text-gray-500 line-through">$799</span></span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="2" data-name="PhotoMaster 500D" data-price="699">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8d035b83-d3ef-43d5-92dd-d80950b7739f.png" alt="High-performance gaming console with wireless controllers" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">NovaX Gaming Console</h3>
+                        <p class="text-gray-700 mb-2">Next-gen 4K gaming with 1TB SSD</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$499</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="3" data-name="NovaX Gaming Console" data-price="499">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e2c0ab74-9828-4661-89f7-72f9b3887092.png" alt="Wireless charging pad with LED indicator lights" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">ChargeHub Pro</h3>
+                        <p class="text-gray-700 mb-2">3-in-1 Wireless Charging Station</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$89</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="4" data-name="ChargeHub Pro" data-price="89">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/33d56f62-641b-4197-8a75-85569fe51a27.png" alt="Ergonomic computer mouse with customizable buttons" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">Precision MX</h3>
+                        <p class="text-gray-700 mb-2">Ergonomic Wireless Mouse</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$79</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="5" data-name="Precision MX" data-price="79">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3d5bd226-af36-4f26-a4ce-27212e6d2326.png" alt="Wireless mechanical keyboard with RGB lighting" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">Popular</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">Mechanical Pro X</h3>
+                        <p class="text-gray-700 mb-2">Wireless Mechanical Keyboard</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$129</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="6" data-name="Mechanical Pro X" data-price="129">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 7 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c15fd6f1-b8a7-4541-be21-bf7014b36da5.png" alt="Portable SSD drive with USB-C connection" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">Blitz SSD 1TB</h3>
+                        <p class="text-gray-700 mb-2">Ultra-fast Portable SSD</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$149</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="7" data-name="Blitz SSD 1TB" data-price="149">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 8 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/87593579-61f6-4282-808a-2091118c922d.png" alt="Smart home assistant device with voice command interface" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">EchoLink AI</h3>
+                        <p class="text-gray-700 mb-2">Smart Home Assistant</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$129</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="8" data-name="EchoLink AI" data-price="129">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 9 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fc5421e2-6529-4a9f-b3e1-1d244fc9d84a.png" alt="Professional tablet with stylus for digital art" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">New</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">ArtTab Pro</h3>
+                        <p class="text-gray-700 mb-2">12.9" Professional Drawing Tablet</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$999</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="9" data-name="ArtTab Pro" data-price="999">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 10 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a000943c-c91d-4aae-a4cb-b3a507ebeb73.png" alt="Compact Bluetooth speaker with waterproof design" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">SoundPulse Mini</h3>
+                        <p class="text-gray-700 mb-2">Portable Bluetooth Speaker</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$79</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="10" data-name="SoundPulse Mini" data-price="79">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 11 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b8d6988d-da99-4809-8061-0bb6c3ca7609.png" alt="Virtual reality headset with motion controllers" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">VR Explorer X</h3>
+                        <p class="text-gray-700 mb-2">Virtual Reality Headset</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$399</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="11" data-name="VR Explorer X" data-price="399">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 12 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b20f785d-10d7-4173-ae77-f0485c693b00.png" alt="Fitness tracker with heart rate monitor and OLED display" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">FitBand Pro</h3>
+                        <p class="text-gray-700 mb-2">Advanced Fitness Tracker</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$119</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="12" data-name="FitBand Pro" data-price="119">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 13 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b84d1576-b463-4f23-9aa1-24a270fe9e52.png" alt="Professional-grade studio monitor speakers" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">StudioMonitor X2</h3>
+                        <p class="text-gray-700 mb-2">Studio Reference Monitors (Pair)</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$599</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="13" data-name="StudioMonitor X2" data-price="599">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 14 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5456e806-894b-45d4-818c-8198662c533c.png" alt="External hard drive with rugged waterproof case" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">ToughDrive 2TB</h3>
+                        <p class="text-gray-700 mb-2">Rugged External Hard Drive</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$149</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="14" data-name="ToughDrive 2TB" data-price="149">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 15 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/658eeef9-a6df-4141-b6dd-011a78ddf00f.png" alt="4K drone with 3-axis gimbal and foldable design" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">SkyMaster Pro</h3>
+                        <p class="text-gray-700 mb-2">4K Folding Drone</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$799</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="15" data-name="SkyMaster Pro" data-price="799">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 16 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/28398d13-07a6-4059-84a0-027131c067bb.png" alt="Smart thermostat with touchscreen display" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">SmartThermo X</h3>
+                        <p class="text-gray-700 mb-2">WiFi Smart Thermostat</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$249</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="16" data-name="SmartThermo X" data-price="249">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 17 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ddf746b5-6cff-40aa-b4b9-7c18dcafe8df.png" alt="Professional-grade microphone for streaming and recording" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">CrystalCast Pro</h3>
+                        <p class="text-gray-700 mb-2">Broadcast Quality Microphone</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$299</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="17" data-name="CrystalCast Pro" data-price="299">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 18 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/57b63f8f-175d-49b8-ab74-db5b213e30ba.png" alt="Wireless presenter with laser pointer and slide controls" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">PresentX</h3>
+                        <p class="text-gray-700 mb-2">Wireless Presentation Remote</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$49</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="18" data-name="PresentX" data-price="49">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 19 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5d7f52c3-07cf-4f84-be39-5189e150143d.png" alt="High-performance gaming desktop with RGB lighting" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">Bestseller</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">Titan Gaming PC</h3>
+                        <p class="text-gray-700 mb-2">RTX 3080 | Ryzen 9 | 32GB RAM</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$2,499</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="19" data-name="Titan Gaming PC" data-price="2499">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 20 -->
+                <div class="card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="relative overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/318d288d-e50a-4a72-a4eb-c7f9ec99d78f.png" alt="Premium noise-canceling earbuds with charging case" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">AirBeats 2</h3>
+                        <p class="text-gray-700 mb-2">True Wireless Earbuds</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-lg">$199</span>
+                            <button class="add-to-cart bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300" data-id="20" data-name="AirBeats 2" data-price="199">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gradient-to-r from-indigo-50 to-blue-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold mb-6">About Gadget Galaxy</h2>
+                <p class="text-lg max-w-3xl mx-auto mb-8">
+                    A Functional E-commerce Website Created by Krishnnarayan, Gadget Galaxy brings you the latest tech innovations with exceptional service.
+                    Our team of experts ensures you get the best products at unbeatable prices.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                    <div class="bg-white p-6 rounded-lg shadow-lg transform transition hover:-translate-y-2">
+                        <div class="text-indigo-500 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Quality Guaranteed</h3>
+                        <p class="text-gray-600">All products rigorously tested to ensure premium quality and performance.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg transform transition hover:-translate-y-2">
+                        <div class="text-indigo-500 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15h11v3a2 2 0 01-2 2H5a2 2 0 01-2-2v-3zM3 9h11V6a2 2 0 00-2-2H5a2 2 0 00-2 2v3zm14-5a2 2 0 012 2v10a2 2 0 01-2 2h-1V4h1z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Tech Experts</h3>
+                        <p class="text-gray-600">Our team consists of passionate tech enthusiasts ready to assist you.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg transform transition hover:-translate-y-2">
+                        <div class="text-indigo-500 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Best Value</h3>
+                        <p class="text-gray-600">Competitive prices without compromising on product quality or service.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Gadget Galaxy</h3>
+                    <p class="mb-4">Your destination for the latest tech gadgets and electronics.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.linkedin.com/in/krishnnarayan-kumar-ab7b87302/" class="text-white hover:text-indigo-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white hover:text-indigo-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white hover:text-indigo-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Shop</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-indigo-300">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-indigo-300">Best Sellers</a></li>
+                        <li><a href="#" class="hover:text-indigo-300">Deals & Discounts</a></li>
+                        <li><a href="#" class="hover:text-indigo-300">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="https://www.linkedin.com/in/krishnnarayan-kumar-ab7b87302/" class="hover:text-indigo-300">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-indigo-300">FAQs</a></li>
+                        <li><a href="https://www.linkedin.com/in/krishnnarayan-kumar-ab7b87302/" class="hover:text-indigo-300">Shipping & Returns</a></li>
+                        <li><a href="https://www.linkedin.com/in/krishnnarayan-kumar-ab7b87302" class="hover:text-indigo-300">Warranty</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Stay Updated</h4>
+                    <p class="mb-4">Subscribe for early access to new products and special discounts.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l focus:outline-none text-gray-800 w-full">
+                        <button class="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-r transition">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>©Krishnnarayan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="absolute right-0 top-0 h-full w-full md:w-1/3 bg-white overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold">Your Cart</h3>
+                    <button id="closeCart" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="cartItems" class="space-y-4">
+                    <!-- Cart items will be added here dynamically -->
+                    <p id="emptyCart" class="text-center py-8">Your cart is empty</p>
+                </div>
+                <div id="cartSummary" class="mt-8 pt-6 border-t border-gray-200 hidden">
+                    <div class="flex justify-between mb-2">
+                        <span>Subtotal</span>
+                        <span id="cartSubtotal">$0.00</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg mt-4">
+                        <span>Total</span>
+                        <span id="cartTotal">$0.00</span>
+                    </div>
+                    <button class="w-full bg-indigo-500 text-white py-3 rounded-lg mt-6 hover:bg-indigo-600 transition">
+                        Proceed to Secure Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Login</h3>
+                <button id="closeLogin" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="email" class="block mb-1">Email</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="password" class="block mb-1">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                </div>
+                <button type="submit" class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">
+                    Login
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p>Don't have an account? <a href="#" class="text-indigo-500 hover:underline">Sign up</a></p>
+                <a href="#" class="text-sm text-indigo-500 hover:underline mt-2 block">Forgot password?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cart functionality
+        let cart = [];
+        
+        // DOM Elements
+        const cartBtn = document.getElementById('cartBtn');
+        const cartModal = document.getElementById('cartModal');
+        const closeCart = document.getElementById('closeCart');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const emptyCartNotice = document.getElementById('emptyCart');
+        const cartSummary = document.getElementById('cartSummary');
+        const cartSubtotal = document.getElementById('cartSubtotal');
+        const cartTotal = document.getElementById('cartTotal');
+        const cartCount = document.getElementById('cartCount');
+        
+        // Login Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLogin = document.getElementById('closeLogin');
+        const loginForm = document.getElementById('loginForm');
+        
+        // Slide Elements
+        const prevSlideBtn = document.getElementById('prevSlide');
+        const nextSlideBtn = document.getElementById('nextSlide');
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        
+        // Event Listeners
+        cartBtn.addEventListener('click', toggleCart);
+        closeCart.addEventListener('click', toggleCart);
+        loginBtn.addEventListener('click', toggleLogin);
+        closeLogin.addEventListener('click', toggleLogin);
+        loginForm.addEventListener('submit', handleLogin);
+        prevSlideBtn.addEventListener('click', showPrevSlide);
+        nextSlideBtn.addEventListener('click', showNextSlide);
+        
+        // Add to cart buttons
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const price = parseFloat(this.getAttribute('data-price'));
+                
+                addToCart(id, name, price);
+                
+                // Animation feedback
+                this.textContent = 'Added!';
+                this.style.backgroundColor = '#10B981'; // green-500
+                setTimeout(() => {
+                    this.textContent = 'Add to Cart';
+                    this.style.backgroundColor = '#3B82F6'; // indigo-500
+                }, 1000);
+            });
+        });
+        
+        // Functions
+        function toggleCart() {
+            cartModal.classList.toggle('hidden');
+            renderCart();
+        }
+        
+        function toggleLogin() {
+            loginModal.classList.toggle('hidden');
+        }
+        
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if(email && password) {
+                alert(`Logged in as ${email}. Welcome back!`);
+                loginModal.classList.add('hidden');
+            } else {
+                alert('Please enter both email and password');
+            }
+        }
+        
+        function addToCart(id, name, price) {
+            // Check if item already in cart
+            const existingItem = cart.find(item => item.id === id);
+            
+            if(existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id,
+                    name,
+                    price,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+            renderCart();
+        }
+        
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartCount();
+            renderCart();
+        }
+        
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = count;
+            
+            if(count > 0) {
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+        
+        function renderCart() {
+            cartItemsContainer.innerHTML = '';
+            
+            if(cart.length === 0) {
+                emptyCartNotice.classList.remove('hidden');
+                cartSummary.classList.add('hidden');
+                return;
+            }
+            
+            emptyCartNotice.classList.add('hidden');
+            cartSummary.classList.remove('hidden');
+            
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'flex justify-between items-center cart-item p-4 bg-gray-50 rounded-lg';
+                cartItemElement.innerHTML = `
+                    <div>
+                        <h4 class="font-medium">${item.name}</h4>
+                        <div class="flex items-center mt-1">
+                            <button class="decrease-quantity text-gray-500 hover:text-gray-700" data-id="${item.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                </svg>
+                            </button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button class="increase-quantity text-gray-500 hover:text-gray-700" data-id="${item.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-bold mr-4">$${(itemTotal).toFixed(2)}</span>
+                        <button class="remove-item text-red-500 hover:text-red-700" data-id="${item.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                cartItemsContainer.appendChild(cartItemElement);
+            });
+            
+            // Add event listeners to new buttons
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    removeFromCart(id);
+                });
+            });
+            
+            document.querySelectorAll('.increase-quantity').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const item = cart.find(item => item.id === id);
+                    if(item) {
+                        item.quantity += 1;
+                        updateCartCount();
+                        renderCart();
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.decrease-quantity').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const item = cart.find(item => item.id === id);
+                    if(item && item.quantity > 1) {
+                        item.quantity -= 1;
+                        updateCartCount();
+                        renderCart();
+                    }
+                });
+            });
+            
+            // Update totals
+            cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+            cartTotal.textContent = `$${subtotal.toFixed(2)}`;
+        }
+        
+        function showNextSlide() {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('prev');
+            
+            currentSlide = (currentSlide + 1) % slides.length;
+            
+            slides[currentSlide].classList.remove('prev');
+            slides[currentSlide].classList.add('active');
+            
+            // Reset other slides
+            for(let i = 0; i < slides.length; i++) {
+                if(i !== currentSlide) {
+                    slides[i].classList.remove('next', 'prev');
+                    if(i === (currentSlide + 1) % slides.length) {
+                        slides[i].classList.add('next');
+                    }
+                }
+            }
+        }
+        
+        function showPrevSlide() {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('next');
+            
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            
+            slides[currentSlide].classList.remove('next');
+            slides[currentSlide].classList.add('active');
+            
+            // Reset other slides
+            for(let i = 0; i < slides.length; i++) {
+                if(i !== currentSlide) {
+                    slides[i].classList.remove('next', 'prev');
+                    if(i === (currentSlide - 1 + slides.length) % slides.length) {
+                        slides[i].classList.add('prev');
+                    }
+                }
+            }
+        }
+        
+        // Initialize slides
+        function initializeSlides() {
+            slides.forEach((slide, index) => {
+                if(index === 0) {
+                    slide.classList.add('active');
+                } else if(index === 1) {
+                    slide.classList.add('next');
+                } else if(index === slides.length - 1) {
+                    slide.classList.add('prev');
+                }
+            });
+        }
+        
+        // Initialize
+        initializeSlides();
+        
+        // Auto slide change every 1.5 seconds
+        setInterval(showNextSlide, 1500);
+    </script>
+</body>
+</html>
